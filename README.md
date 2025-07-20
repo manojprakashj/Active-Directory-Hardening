@@ -41,4 +41,11 @@ Computer Configuration → Administrative Templates → Network → DNS Client
 Next, link the GPO to the appropriate OUs. In our lab, both Workstations and Servers are under the CORP OU. Right-click the CORP OU in Group Policy Management and select “Create a GPO in this domain, and Link it here.” In production, you'd typically link it to more specific OUs like Workstations or Servers. To do that, right-click the desired OU (e.g., Workstations) and choose “Link an existing GPO,” then select Disable LLMNR. Group Policy updates automatically every 90 minutes with a 30-minute offset, or you can force an update using gpupdate /force or the Group Policy Update option in the console.
 
 
+## SMB Null Session
 
+Fortunately, fixing this issue is straightforward. Start by removing the Everyone group from the Pre-Windows 2000 Compatible Access group—this alone often resolves the problem. As a secondary step, check the Default Domain Controllers Policy in Group Policy to ensure that "Network access: Let Everyone permissions apply to anonymous users" is set to Disabled. To do this, edit the policy and go to:
+- Computer Configuration → Windows Settings → Security Settings → Local Policies → Security Options.
+- Then change the setting to Disabled.
+- Finally run gpupdate to apply the changes.
+
+or run the Remediate-SMBNullSessions.ps1 to automate the process.
