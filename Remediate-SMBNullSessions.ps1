@@ -1,16 +1,3 @@
-<#
-.SYNOPSIS
-    Remediate SMB Null Sessions by removing Everyone from Pre-Windows 2000 group and disabling anonymous access.
-.DESCRIPTION
-    This script performs two security hardening actions:
-    1. Removes the Everyone group from "Pre-Windows 2000 Compatible Access" group
-    2. Disables "Network access: Let Everyone permissions apply to anonymous users" in Default Domain Controllers Policy
-.NOTES
-    File Name      : Remediate-SMBNullSessions.ps1
-    Prerequisite   : PowerShell 5.1 or later, Domain Admin privileges
-    Run as Administrator: Yes
-#>
-
 # Function to remove Everyone from Pre-Windows 2000 Compatible Access group
 function Remove-EveryoneFromPreWin2KGroup {
     try {
