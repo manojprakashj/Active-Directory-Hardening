@@ -1,14 +1,3 @@
-<#
-.SYNOPSIS
-    Disables NetBT anonymous access to prevent SMB null sessions.
-.DESCRIPTION
-    Sets the registry value 'NetbiosOptions' to 2 (Disable NetBIOS over TCP/IP) on all network interfaces.
-.NOTES
-    Author: Your Name
-    Version: 1.0
-    Deployment: Run via GPO Startup Script
-#>
-
 # Registry path where NetBT settings are stored
 $regPath = "HKLM:\SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces"
 
