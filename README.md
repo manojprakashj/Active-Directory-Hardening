@@ -68,3 +68,10 @@ Next, click Advanced and select the WINS tab.
 
 We can select Disable NetBIOS over TCP/IP from here to turn this setting off.
 
+![registry_nbt](https://github.com/user-attachments/assets/85746204-c0c6-44a3-93ae-a1124e880c0c)
+
+Since NBT-NS is controlled via the Registry on each host, manually editing this setting on potentially hundreds of machines isn't practical. Instead, we can automate the process using a PowerShell script deployed through Group Policy as a Startup script. The relevant Registry key is located at:
+
+HKLM:\SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces
+
+By default, this value is set to 0 (or Default)—as seen in the WINS tab of the network adapter properties. Using a script allows us to update this setting across multiple systems efficiently without needing to touch each one manually.
