@@ -17,3 +17,6 @@ We should also ensure that ANONYMOUS LOGON does not have read access over the Us
 
 This can also be remediated with a single PowerShell script as follows. Please check the LDAP_Anonymous_Bind.ps1 that have been uploaded.
 
+- It first figures out the domain's distinguished name (DN), then builds an LDAP path to the CN=Directory Service within the Configuration partition. It connects using ADSI with read/write access.
+- Next, it clears the dSHeuristics attribute.
+- Finally, it removes the GenericRead permission for ANONYMOUS LOGON on the CN=Users container. This helps block unauthenticated users from making anonymous LDAP queries to read user object data.
