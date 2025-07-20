@@ -13,5 +13,6 @@ Next, navigate to CN=Directory Service, under CN=Windows NT, CN=Services, and CN
 
 We should also ensure that ANONYMOUS LOGON does not have read access over the Users CN or other objects, including the domain object itself.
 
-![anon_logon_read](https://github.com/user-attachments/assets/cdb01d63-1271-4749-82de-f3e80499dc15)
+![anon_logon_read](https://github.com/user-attachments/assets/88c1e372-39f0-4b6d-8169-7206f2a2c597)
+
 
