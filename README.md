@@ -51,3 +51,20 @@ Fortunately, fixing this issue is straightforward. Start by removing the Everyon
 - Finally run gpupdate to apply the changes.
 
 or run the Remediate-SMBNullSessions.ps1 to automate the process.
+
+## NBT-NS
+
+Unfortunately, unlike LLMNR, there's no dedicated Group Policy setting to disable NBT-NS globally—it has to be done at the host level. While there are ways to streamline this using scripts or deployment tools, it's helpful to first understand the manual process. NBT-NS can be disabled through the Network Connections settings on each machine. To do this, go to Network & Internet Settings, then click Change adapter options. Right-click the active network adapter, choose Properties, and proceed to modify the settings there.
+
+![edit_adapter](https://github.com/user-attachments/assets/c0fd540e-7fc0-4cf0-8d52-603fc3c407c9)
+
+Next, select Internet Protocol Version 4 (TCP/IPv4) and click Properties.
+
+![ethernet_properties](https://github.com/user-attachments/assets/f32efeab-f3a7-4e3f-9364-840e70bc6f7c)
+
+Next, click Advanced and select the WINS tab.
+
+![advanced_tcp_ip](https://github.com/user-attachments/assets/fc3b6d8f-b771-4782-831b-b2ded27ff9c5)
+
+We can select Disable NetBIOS over TCP/IP from here to turn this setting off.
+
