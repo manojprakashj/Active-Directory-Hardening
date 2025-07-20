@@ -15,5 +15,5 @@ We should also ensure that ANONYMOUS LOGON does not have read access over the Us
 
 ![anon_logon_read](https://github.com/user-attachments/assets/d9a6e0ef-da9f-4cd9-8ca9-7b95c8647ada)
 
-
+This can also be remediated with a single PowerShell script as follows. Please check the LDAP_Anonymous_Bind.ps1 that have been uploaded.
 
