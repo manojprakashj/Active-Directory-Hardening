@@ -22,6 +22,8 @@ This can also be remediated with a single PowerShell script as follows. Please c
 
 ## Remediating LLMNR/NBT-NS Response Spoofing
 
+![llmnr_poison1](https://github.com/user-attachments/assets/a993861b-8dfe-41bd-bcc3-a0bb722d4817)
+
 LLMNR can be turned off using Group Policy, and the best practice is to create a separate GPO for this purpose instead of modifying the Default Domain Policy. Naming it something like "Disable LLMNR" makes it easier to audit, target specific OUs, roll back if needed, and keeps your baseline domain policy clean.
 
 To do this, start by creating a new GPO:
