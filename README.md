@@ -1,5 +1,7 @@
 # Active-Directory-Hardening
-If Active Directory isn’t secured, attackers can gather user and computer lists, descriptions, and password policies without logging in. This info helps them launch password spraying attacks using valid usernames and compliant passwords while avoiding account lockouts by spacing out attempts.
+Active Directory (AD) is a critical component of enterprise networks, but its default configurations often expose it to security risks. One such risk is unauthenticated enumeration, where attackers can gather sensitive information such as user lists, computer details, group memberships, and even password policies without needing valid credentials.
+
+While this data alone may not grant direct access, it becomes dangerous when combined with techniques like password spraying. Attackers can use valid usernames and the domain’s password policy to craft targeted login attempts, avoiding account lockouts by spacing out attempts. Even more concerning, some organizations store plaintext passwords in AD description fields, providing attackers with an easy path to compromise accounts.
 
 ## Remediating LDAP Anonymous Bind
 
@@ -15,7 +17,7 @@ We should also ensure that ANONYMOUS LOGON does not have read access over the Us
 
 ![anon_logon_read](https://github.com/user-attachments/assets/d9a6e0ef-da9f-4cd9-8ca9-7b95c8647ada)
 
-This can also be remediated with a single PowerShell script as follows. Please check the LDAP_Anonymous_Bind.ps1 that have been uploaded.
+This can also be remediated with a single PowerShell script as follows. Please check the ``` LDAP_Anonymous_Bind.ps1 ``` that have been uploaded.
 
 - It first figures out the domain's distinguished name (DN), then builds an LDAP path to the CN=Directory Service within the Configuration partition. It connects using ADSI with read/write access. Next, it clears the dSHeuristics attribute.
 - Finally, it removes the GenericRead permission for ANONYMOUS LOGON on the CN=Users container. This helps block unauthenticated users from making anonymous LDAP queries to read user object data.
@@ -41,7 +43,7 @@ Computer Configuration → Administrative Templates → Network → DNS Client
 
 ![disable_multicast_gpo](https://github.com/user-attachments/assets/6d389d93-c8f4-4b3b-b2b7-d312cd63bc26)
 
-Next, link the GPO to the appropriate OUs. In our lab, both Workstations and Servers are under the CORP OU. Right-click the CORP OU in Group Policy Management and select “Create a GPO in this domain, and Link it here.” In production, you'd typically link it to more specific OUs like Workstations or Servers. To do that, right-click the desired OU (e.g., Workstations) and choose “Link an existing GPO,” then select Disable LLMNR. Group Policy updates automatically every 90 minutes with a 30-minute offset, or you can force an update using gpupdate /force or the Group Policy Update option in the console.
+Next, link the GPO to the appropriate OUs. In our lab, both Workstations and Servers are under the OU. Right-click the  OU in Group Policy Management and select “Create a GPO in this domain, and Link it here.” In production, you'd typically link it to more specific OUs like Workstations or Servers. To do that, right-click the desired OU (e.g., Workstations) and choose “Link an existing GPO,” then select Disable LLMNR. Group Policy updates automatically every 90 minutes with a 30-minute offset, or you can force an update using gpupdate /force or the Group Policy Update option in the console.
 
 
 ## SMB Null Session
@@ -51,7 +53,7 @@ Fortunately, fixing this issue is straightforward. Start by removing the Everyon
 - Then change the setting to Disabled.
 - Finally run gpupdate to apply the changes.
 
-or run the Remediate-SMBNullSessions.ps1 to automate the process.
+or run the ``` Remediate-SMBNullSessions.ps1 ``` to automate the process.
 
 ## NBT-NS
 
@@ -76,3 +78,76 @@ Since NBT-NS is controlled via the Registry on each host, manually editing this 
 ``` HKLM:\SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces ```
 
 By default, this value is set to 0 (or Default)—as seen in the WINS tab of the network adapter properties. Using a script allows us to update this setting across multiple systems efficiently without needing to touch each one manually.
+
+
+## Remediating Default MachineAccountQuota
+
+```powershell
+Get-ADObject -Identity ((Get-ADDomain).distinguishedname) -Properties ms-DS-MachineAccountQuota
+```
+
+After confirming the default value of 10, we can easily change it to 0.
+
+```powershell
+Set-ADdomain -Identity manojprakash.local -Replace @{"ms-DS-MachineAccountQuota"="0"} -Verbose
+```
+
+Now that we've made the change, we'll recheck it to confirm that non-privileged users can no longer create machine accounts.
+
+```powershell
+PS C:\manoj> Get-ADObject -Identity ((Get-ADDomain).distinguishedname) -Properties ms-DS-MachineAccountQuota
+
+
+DistinguishedName         : DC=manojprakash,DC=local
+ms-DS-MachineAccountQuota : 0
+Name                      : manojprakash
+ObjectClass               : domainDNS
+ObjectGUID                : 9a43cedd-d603-799b-a2b0-320b2ee20599
+```
+
+## Remediating Open/Writable SMB Shares
+
+First, PowerShell can be utilized to list all SMB shares and their associated permissions.
+
+```powershell
+PS C:\manoj> 
+$smbShares = Get-SmbShare #Get all SMB shares
+
+# Iterate over each share and get its permissions
+foreach ($share in $smbShares) {
+    Write-Host "Share Name: $($share.Name)"
+    Write-Host "Path: $($share.Path)"
+    
+    # Get the access permissions for the share
+    $permissions = Get-SmbShareAccess -Name $share.Name
+    
+    # Display the permissions
+    foreach ($permission in $permissions) {
+        Write-Host "  Account: $($permission.AccountName)"
+        Write-Host "  Access: $($permission.AccessControlType)"
+        Write-Host "  Rights: $($permission.AccessRight)"
+        Write-Host ""
+    }
+    
+    Write-Host "----------------------------------------"
+}
+```
+
+Upon identifying shares with excessive permissions, the ```Grant-SmbShareAccess``` cmdlet can be utilized to modify these permissions.
+
+For example, the Revoke-SmbShareAccess cmdlet should be used to remove permissions for unauthorized users or groups.
+
+```powershell
+PS C:\manoj> Revoke-SmbShareAccess -Name "ShareName" -AccountName "Domain\UnauthorizedUser"
+```
+
+As for modifying existing permissions, the Set-SmbShareAccess cmdlet should be used.
+
+```powershell
+PS C:\manoj>  Grant-SmbShareAccess -Name "ShareName" -AccountName "Domain\User" -AccessRight Read
+```
+
+## Conclusion
+Hardening Active Directory is critical for reducing your attack surface and preventing common initial access techniques. By addressing issues like anonymous LDAP binds, LLMNR/NBT-NS spoofing, SMB null sessions, excessive share permissions, and the default MachineAccountQuota, you significantly improve your domain’s resilience.
+
+Always test changes in a lab before production, use automation where possible, and regularly audit your environment to catch regressions. Security is an ongoing process, layered defenses and proactive monitoring are key.
