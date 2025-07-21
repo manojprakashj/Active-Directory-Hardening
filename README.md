@@ -151,6 +151,6 @@ PS C:\manoj>  Grant-SmbShareAccess -Name "ShareName" -AccountName "Domain\User" 
 ```
 
 ## Conclusion
-Hardening Active Directory is critical for reducing your attack surface and preventing common initial access techniques. By addressing issues like anonymous LDAP binds, LLMNR/NBT-NS spoofing, SMB null sessions, excessive share permissions, and the default MachineAccountQuota, you significantly improve your domain’s resilience.
-
-Always test changes in a lab before production, use automation where possible, and regularly audit your environment to catch regressions. Security is an ongoing process, layered defenses and proactive monitoring are key.
+<p align="justify">
+Hardening Active Directory is critical for reducing your attack surface and preventing common initial access techniques. By addressing issues like anonymous LDAP binds, LLMNR/NBT-NS spoofing, SMB null sessions, excessive share permissions, and the default MachineAccountQuota, you significantly improve your domain’s resilience. Always test changes in a lab before production, use automation where possible, and regularly audit your environment to catch regressions. Security is an ongoing process, layered defenses and proactive monitoring are key.
+</p>
