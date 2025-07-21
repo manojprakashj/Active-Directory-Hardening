@@ -1,4 +1,4 @@
-# Active-Directory-Hardening
+# Active Directory Hardening From Initial Recon
 <p align="justify">
 Active Directory (AD) is a critical component of enterprise networks, but its default configurations often expose it to security risks. One such risk is unauthenticated enumeration, where attackers can gather sensitive information such as user lists, computer details, group memberships, and even password policies without needing valid credentials.
 </p>
