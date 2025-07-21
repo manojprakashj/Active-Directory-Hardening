@@ -1,8 +1,10 @@
 # Active-Directory-Hardening
+<p align="justify">
 Active Directory (AD) is a critical component of enterprise networks, but its default configurations often expose it to security risks. One such risk is unauthenticated enumeration, where attackers can gather sensitive information such as user lists, computer details, group memberships, and even password policies without needing valid credentials.
-
+</p>
+<p align="justify">
 While this data alone may not grant direct access, it becomes dangerous when combined with techniques like password spraying. Attackers can use valid usernames and the domain’s password policy to craft targeted login attempts, avoiding account lockouts by spacing out attempts. Even more concerning, some organizations store plaintext passwords in AD description fields, providing attackers with an easy path to compromise accounts.
-
+</p>
 ## Remediating LDAP Anonymous Bind
 
 You can do this manually by opening ADSI Edit, right-clicking on it, selecting Connect To, and then choosing Configuration as the naming context.
